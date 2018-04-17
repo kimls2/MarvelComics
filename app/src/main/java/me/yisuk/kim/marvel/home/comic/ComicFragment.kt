@@ -34,6 +34,7 @@ class ComicFragment : BaseFragment<ComicViewModel>() {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ComicViewModel::class.java)
         homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
         controller = ComicController()
+        viewModel.fullRefresh()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -80,7 +81,8 @@ class ComicFragment : BaseFragment<ComicViewModel>() {
                     Status.ERROR -> {
                         grid_swipe_refresh.isRefreshing = false
                         controller.isLoading = false
-                        Snackbar.make(grid_recyclerview, it.message?: "EMPTY", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(grid_recyclerview, it.message
+                                ?: "EMPTY", Snackbar.LENGTH_SHORT).show()
                     }
                     Status.REFRESHING -> grid_swipe_refresh.isRefreshing = true
                     Status.LOADING_MORE -> controller.isLoading = true

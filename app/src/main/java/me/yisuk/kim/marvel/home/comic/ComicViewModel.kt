@@ -40,10 +40,6 @@ class ComicViewModel @Inject constructor(
     val viewState: LiveData<State> = LiveDataReactiveStreams.fromPublisher(
             Flowable.fromPublisher(messages.toFlowable(BackpressureStrategy.LATEST)))
 
-    init {
-        fullRefresh()
-    }
-
     fun fullRefresh() {
         disposables += comicCall.refresh(Unit)
                 .observeOn(schedulers.main)
