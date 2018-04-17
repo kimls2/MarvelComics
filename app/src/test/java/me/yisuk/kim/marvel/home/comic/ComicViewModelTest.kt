@@ -15,7 +15,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
-import org.mockito.Mockito.verify
+import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 
 /**
@@ -23,6 +23,7 @@ import org.mockito.MockitoAnnotations
  */
 class ComicViewModelTest {
 
+    @Suppress("unused")
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
@@ -51,8 +52,10 @@ class ComicViewModelTest {
         comicViewModel.viewState.observeForever(testStateObserver)
         comicViewModel.fullRefresh()
 
-        verify(testStateObserver).onChanged(State(Status.REFRESHING))
-        verify(testStateObserver).onChanged(State(Status.SUCCESS))
+        val inOrder = Mockito.inOrder(testStateObserver)
+        inOrder.verify(testStateObserver).onChanged(State(Status.REFRESHING))
+        inOrder.verify(testStateObserver).onChanged(State(Status.SUCCESS))
+        inOrder.verifyNoMoreInteractions()
     }
 
     @Test
@@ -61,7 +64,10 @@ class ComicViewModelTest {
         comicViewModel.viewState.observeForever(testStateObserver)
         comicViewModel.fullRefresh()
 
-        verify(testStateObserver).onChanged(State(Status.ERROR))
+        val inOrder = Mockito.inOrder(testStateObserver)
+        inOrder.verify(testStateObserver).onChanged(State(Status.REFRESHING))
+        inOrder.verify(testStateObserver).onChanged(State(Status.ERROR))
+        inOrder.verifyNoMoreInteractions()
     }
 
     @Test
@@ -70,6 +76,9 @@ class ComicViewModelTest {
         comicViewModel.viewState.observeForever(testStateObserver)
         comicViewModel.onListScrolledToEnd()
 
-        verify(testStateObserver).onChanged(State(Status.LOADING_MORE))
+        val inOrder = Mockito.inOrder(testStateObserver)
+        inOrder.verify(testStateObserver).onChanged(State(Status.LOADING_MORE))
+        inOrder.verify(testStateObserver).onChanged(State(Status.SUCCESS))
+        inOrder.verifyNoMoreInteractions()
     }
 }
